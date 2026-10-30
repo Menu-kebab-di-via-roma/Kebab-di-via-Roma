@@ -190,6 +190,7 @@
       transition: 0.2s;
     }
     .type-btn.active { border-color: var(--primary); background: #fdf2e9; color: var(--primary); box-shadow: 0 3px 10px rgba(153,0,0,0.15); }
+    .type-btn.tavolo-active { border-color: #27ae60; background: #eafaf1; color: #27ae60; box-shadow: 0 3px 10px rgba(39,174,96,0.2); }
     .type-btn.deliveroo-active { border-color: var(--deliveroo); background: #e8f8f5; color: #009473; box-shadow: 0 3px 10px rgba(0,184,148,0.15); }
     .type-btn.student-active { border-color: var(--gold); background: #fef9e7; color: #9a7d0a; box-shadow: 0 3px 10px rgba(212,175,55,0.2); }
     .type-btn small { display: block; font-size: 0.52rem; color: var(--text-muted); font-weight: normal; }
@@ -492,6 +493,11 @@
       <span id="lbl-asporto">Asporto</span>
       <small id="lbl-asporto-sub">(-0.50€ su Cibo)</small>
     </div>
+    <!-- Tavolo बटन जो -0.50€ डिस्काउंट के साथ जोड़ा गया है -->
+    <div class="type-btn" id="btn-tavolo" onclick="setOrderType('tavolo')">
+      <span>🍽️ Tavolo</span>
+      <small>(-0.50€ Sconto Tavolo)</small>
+    </div>
     <div class="type-btn" id="btn-consegna" onclick="setOrderType('consegna')">
       <span id="lbl-consegna">Consegna</span>
       <small id="lbl-consegna-sub">(+2.50€ Consegna)</small>
@@ -546,7 +552,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeConfirmationModal()" id="btn-modifica">✏ Modifica</button>
-      <button class="btn-confirm" onclick="sendWhatsAppOrder()" id="btn-invia">✅ Invia su WhatsApp</button>
+      <button class="btn-confirm" onclick="sendWhatsAppOrderAndPrint()" id="btn-invia">✅ Invia e Stampa</button>
     </div>
   </div>
 </div>
@@ -580,8 +586,4 @@ const ingredientsDict = {
   },
   ar: {
     piccante: 'صلصة حارة', yogurt: 'صلصة زبادي', algerina: 'صلصة جزائرية', rosa: 'صلصة وردية', insalata: 'خس', verza_carote: 'ملفوف وجزر', cetrioli: 'خيار', cipolla: 'بصل', pomodoro: 'طماطم', olive: 'زيتون', peperoncino: 'فلفل حار',
-    maionese: 'مايونيز', ketchup: 'كاتشب', extra_cipolla: 'بصل إضافي', extra_piccante: 'حار إضافي', carne_extra: 'لحم إضافي'
-  },
-  bn: {
-    piccante: 'ঝাল সস', yogurt: 'দই সস', algerina: 'আলজেরিয়ান সস', rosa: 'পিঙ্ক সস', insalata: 'সালাদ', verza_carote: 'বাঁধাকপি ও গাজর', cetrioli: 'শসা', cipolla: 'পেঁয়াজ', pomodoro: 'টমেটো', olive: 'জলপাই', peperoncino: 'মরিচ',
-    maionese: 'মেয়োনিজ', ketchup: 'কেচাপ'
+    maionese: 'مايونيز', ketchup: 'كاتشب', ex
