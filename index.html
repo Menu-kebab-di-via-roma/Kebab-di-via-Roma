@@ -176,7 +176,7 @@
     .order-type-selector { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
     .type-btn {
       flex: 1;
-      min-width: 30%;
+      min-width: 22%;
       padding: 8px 4px;
       border: 1px solid var(--card-border);
       border-radius: 8px;
@@ -185,7 +185,7 @@
       text-align: center;
       cursor: pointer;
       font-weight: bold;
-      font-size: 0.72rem;
+      font-size: 0.70rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.03);
       transition: 0.2s;
     }
@@ -193,7 +193,7 @@
     .type-btn.tavolo-active { border-color: #27ae60; background: #eafaf1; color: #27ae60; box-shadow: 0 3px 10px rgba(39,174,96,0.2); }
     .type-btn.deliveroo-active { border-color: var(--deliveroo); background: #e8f8f5; color: #009473; box-shadow: 0 3px 10px rgba(0,184,148,0.15); }
     .type-btn.student-active { border-color: var(--gold); background: #fef9e7; color: #9a7d0a; box-shadow: 0 3px 10px rgba(212,175,55,0.2); }
-    .type-btn small { display: block; font-size: 0.52rem; color: var(--text-muted); font-weight: normal; }
+    .type-btn small { display: block; font-size: 0.50rem; color: var(--text-muted); font-weight: normal; }
 
     .instructions-notice {
       background: linear-gradient(to right, #fef9e7, #fcf3cf);
@@ -482,7 +482,7 @@
   <div class="order-type-selector">
     <div class="type-btn active" id="btn-asporto" onclick="setOrderType('asporto')">
       <span id="lbl-asporto">Asporto</span>
-      <small id="lbl-asporto-sub">(-0.50€ su Cibo)</small>
+      <small id="lbl-asporto-sub">(-0.50€ Sconto)</small>
     </div>
     <div class="type-btn" id="btn-tavolo" onclick="setOrderType('tavolo')">
       <span>🍽️ Tavolo</span>
@@ -499,7 +499,7 @@
   </div>
 
   <div class="instructions-notice" id="main-notice">
-    🎁 <b>Promozione:</b> Per ordini al tavolo o asporto, tutte le pietanze hanno uno sconto applicato di 0,50€!
+    🎁 <b>Promozione:</b> Per ordini al tavolo o asporto, il prezzo mostrato è già scontato di 0,50€!
   </div>
 
   <div class="category-nav" id="category-nav-bar">
@@ -544,21 +544,31 @@
 <script>
 const state = {
   orderType: 'asporto',
+  activeCategory: 'all',
   cart: {},
   lang: 'it'
 };
 
-// نمونه مینو (آیتم‌ها با قیمت اصلی، که اگر Asporto یا Tavolo منتخب باشد 0.50 یورو کم می‌شود)
+const commonSenzaKeys = ['piccante', 'yogurt', 'algerina', 'rosa', 'insalata', 'verza_carote', 'cetrioli', 'cipolla', 'pomodoro', 'olive', 'peperoncino'];
+const commonExtraKeys = ['maionese', 'ketchup', 'extra_cipolla', 'extra_piccante', 'carne_extra'];
+
 const menuData = [
-  { id: 'kebab_standard', cat: 'kebab', name: 'Kebab Standard', price: 6.00, desc: 'Carne kebab, insalata, salsa' },
-  { id: 'piadina_kebab', cat: 'piadina', name: 'Piadina Kebab', price: 5.50, desc: 'Piadina con carne kebab e ingredienti' },
-  { id: 'pizza_kebab', cat: 'non-kebab', name: 'Pizza Kebab', price: 7.00, desc: 'Pizza condita con kebab' },
-  { id: 'patatine', cat: 'fritti', name: 'Patatine Fritte', price: 3.00, desc: 'Porzione di patatine' },
-  { id: 'cola', cat: 'bevande', name: 'Coca Cola 33cl', price: 2.50, desc: 'Lattina' }
+  { id: 'piadina_speciale', cat: 'speciale', name: 'Piadina Speciale', price: 5.50, desc: 'Piadina speciale con carne e salse a scelta' },
+  { id: 'panino_kebab', cat: 'kebab', name: 'Panino Kebab', price: 5.50, desc: 'Pane arabo, carne kebab, insalata mixta e salse' },
+  { id: 'piadina_kebab', cat: 'piadina', name: 'Piadina Kebab', price: 5.50, desc: 'Piadina arrotolata con carne kebab e contorni' },
+  { id: 'piadina_falafel', cat: 'piadina', name: 'Piadina Falafel', price: 5.00, desc: 'Falafel vegetariani in piadina' },
+  { id: 'piastina_solo_carne', cat: 'kebab', name: 'Panino Solo Carne', price: 6.50, desc: 'Pane imbottito con sola carne kebab' },
+  { id: 'piatto_kebab', cat: 'kebab', name: 'Piatto Kebab', price: 8.00, desc: 'Piatto di carne kebab con patatine, insalata e pane' },
+  { id: 'hamburger', cat: 'non-kebab', name: 'Hamburger Classico', price: 4.50, desc: 'Hamburger di carne con formaggio e salse' },
+  { id: 'pizza_kebab', cat: 'non-kebab', name: 'Pizza Kebab', price: 7.50, desc: 'Pizza con base pomodoro, mozzarella e carne kebab' },
+  { id: 'patatine_piccole', cat: 'fritti', name: 'Patatine Fritte (Piccola)', price: 2.50, desc: 'Patatine croccanti fritte' },
+  { id: 'patatine_grandi', cat: 'fritti', name: 'Patatine Fritte (Grande)', price: 3.50, desc: 'Porzione grande di patatine fritte' },
+  { id: 'coca_cola', cat: 'bevande', name: 'Coca-Cola 33cl', price: 2.00, desc: 'Lattina 33cl' },
+  { id: 'acqua', cat: 'bevande', name: 'Acqua Naturale 50cl', price: 1.00, desc: 'Bottiglietta d\'acqua' }
 ];
 
-function getEffectivePrice(basePrice) {
-  // اگر اسپورٹو (asporto) یا تاولو (tavolo) فعال ہو تو 50 سینٹ کی چھوٹ (discount) لگ جائے گی
+function getEffectivePrice(basePrice, cat) {
+  if (cat === 'bevande') return basePrice; // Peijano aur Khane par Sconto
   if (state.orderType === 'asporto' || state.orderType === 'tavolo') {
     return Math.max(0, basePrice - 0.50);
   }
@@ -578,37 +588,11 @@ function setOrderType(type) {
   updateTotal();
 }
 
-function renderMenu() {
-  const container = document.getElementById('menu-container');
-  container.innerHTML = '';
-  
-  menuData.forEach(item => {
-    const finalPrice = getEffectivePrice(item.price);
-    const html = `
-      <div class="menu-item">
-        <div class="item-header">
-          <div class="item-details">
-            <div class="item-title-row">
-              <span class="item-title">${item.name}</span>
-              ${(state.orderType === 'asporto' || state.orderType === 'tavolo') ? '<span class="badge-promo">-0.50€ Sconto</span>' : ''}
-            </div>
-            <div style="font-size:0.7rem; color:#7f8c8d;">${item.desc}</div>
-            <div class="item-price" style="margin-top:4px;">€ ${finalPrice.toFixed(2)}</div>
-          </div>
-          <div class="qty-controls">
-            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
-            <span style="font-weight:bold; font-size:0.85rem;" id="qty-${item.id}">${state.cart[item.id] ? state.cart[item.id].qty : 0}</span>
-            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
-          </div>
-        </div>
-      </div>
-    `;
-    container.innerHTML += html;
-  });
+function filterCategory(cat, btn) {
+  state.activeCategory = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu();
 }
 
-function changeQty(itemId, delta) {
-  if (!state.cart[itemId]) {
-    if (delta > 0) {
-      const item = menuData.find(i => i.id === itemId);
-      state.cart[
+function renderMenu
