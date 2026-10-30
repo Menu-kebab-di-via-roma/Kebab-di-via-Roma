@@ -493,7 +493,7 @@
       <span id="lbl-asporto">Asporto</span>
       <small id="lbl-asporto-sub">(-0.50€ su Cibo)</small>
     </div>
-    <!-- Tavolo बटन जो 0.50€ डिस्काउंट के साथ जोड़ा गया है -->
+    <!-- یہاں Tavolo کا بٹन شامل ہے جو -0.50€ ڈسکاؤنٹ دیتا ہے -->
     <div class="type-btn" id="btn-tavolo" onclick="setOrderType('tavolo')">
       <span>🍽️ Tavolo</span>
       <small>(-0.50€ Sconto Tavolo)</small>
@@ -552,7 +552,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeConfirmationModal()" id="btn-modifica">✏ Modifica</button>
-      <button class="btn-confirm" onclick="sendWhatsAppOrderAndPrint()" id="btn-invia">✅ Invia su WhatsApp</button>
+      <button class="btn-confirm" onclick="sendWhatsAppOrderAndPrint()" id="btn-invia">✅ Invia e Stampa</button>
     </div>
   </div>
 </div>
@@ -586,79 +586,4 @@ const ingredientsDict = {
   },
   ar: {
     piccante: 'صلصة حارة', yogurt: 'صلصة زبادي', algerina: 'صلصة جزائرية', rosa: 'صلصة وردية', insalata: 'خس', verza_carote: 'ملفوف وجزر', cetrioli: 'خيار', cipolla: 'بصل', pomodoro: 'طماطم', olive: 'زيتون', peperoncino: 'فلفل حار',
-    maionese: 'مايونيز', ketchup: 'كاتشب', extra_cipolla: 'بصل إضافي', extra_piccante: 'حار إضافي', carne_extra: 'لحم إضافي'
-  },
-  bn: {
-    piccante: 'ঝাল সস', yogurt: 'দই সস', algerina: 'আলজেরিয়ান সস', rosa: 'পিঙ্ক সস', insalata: 'সালাদ', verza_carote: 'বাঁধাকপি ও গাজর', cetrioli: 'শসা', cipolla: 'পেঁয়াজ', pomodoro: 'টমেটো', olive: 'জলপাই', peperoncino: 'মরিচ',
-    maionese: 'মেয়োনিজ', ketchup: 'কেচাপ'
-  }
-};
-
-// डिस्काउंट लॉजिक: Asporto या Tavolo होने पर 0.50€ की छूट
-function getEffectivePrice(basePrice) {
-  if (state.orderType === 'asporto' || state.orderType === 'tavolo') {
-    return Math.max(0, basePrice - 0.50);
-  }
-  return basePrice;
-}
-
-function setOrderType(type) {
-  state.orderType = type;
-  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active', 'tavolo-active', 'deliveroo-active', 'student-active'));
-  
-  if (type === 'asporto') document.getElementById('btn-asporto').classList.add('active');
-  else if (type === 'tavolo') document.getElementById('btn-tavolo').classList.add('tavolo-active');
-  else if (type === 'consegna') document.getElementById('btn-consegna').classList.add('active');
-  else if (type === 'student') document.getElementById('btn-student').classList.add('student-active');
-  else if (type === 'deliveroo') document.getElementById('btn-deliveroo').classList.add('deliveroo-active');
-  
-  // renderMenu या आपकी ओरिजिनल फ़ंक्शन कॉल अगर मौजूद हो तो यहाँ ट्रिगर होगी
-}
-
-function toggleLangMenu() {
-  document.getElementById('langMenuPopup').classList.toggle('show');
-}
-
-function changeLanguage(lang) {
-  state.lang = lang;
-  document.getElementById('current-lang-label').innerText = lang.toUpperCase();
-  document.getElementById('langMenuPopup').classList.remove('show');
-}
-
-function closeConfirmationModal() {
-  document.getElementById('confirm-modal').style.display = 'none';
-}
-
-function openConfirmationModal() {
-  document.getElementById('confirm-modal').style.display = 'flex';
-}
-
-// थर्मल प्रिंटर (IP: 192.168.1.100, Port: 9100) और WhatsApp पर ऑर्डर भेजने का फंक्शन
-function sendWhatsAppOrderAndPrint() {
-  const customerName = document.getElementById('customer-name') ? document.getElementById('customer-name').value : 'Cliente';
-  let message = `Nuovo Ordine (${state.orderType.toUpperCase()}):\nCliente: ${customerName}\n`;
-  
-  for (let key in state.cart) {
-    const c = state.cart[key];
-    const p = getEffectivePrice(c.item.price);
-    message += `- ${c.qty}x ${c.item.name} (€ ${p.toFixed(2)})\n`;
-  }
-
-  // थर्मल प्रिंटर को लोकल नेटवर्क के जरिए प्रिंट कमांड भेजना
-  fetch('http://192.168.1.100:9100', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type:': 'text/plain' },
-    body: message
-  }).catch(err => {
-    console.log('Printer connection note:', err);
-  });
-
-  // व्हाट्सएप पर भेजना
-  const url = `https://wa.me/393932228224?text=${encodeURIComponent(message)}`;
-  window.open(url, '_blank');
-  closeConfirmationModal();
-}
-</script>
-</body>
-</html>
+    maionese: 'مايونيز', ketchup: 'كاتشب', 
